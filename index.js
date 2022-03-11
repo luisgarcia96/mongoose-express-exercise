@@ -19,13 +19,17 @@ async function main() {
         })
 }
 
+//Configuration d'express pour définir le chemin d'accès vers les views ou templates 
 app.set('views', path.join(__dirname, 'views'));
+
+//Configuration d'express pour définir EJS comme moteur de templates
 app.set('view engine', 'ejs');
 
 app.listen(3000, () => {
     console.log("App is listening on port 3000");
 })
 
-app.get('/dog', (req, res) => {
-    res.send('Woof!')
+app.get('/products', async (req, res) => {
+    const products = await Product.find({})
+    res.render('products/index.ejs', {products})
 })
