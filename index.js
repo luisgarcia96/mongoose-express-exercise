@@ -4,10 +4,12 @@ const app = express();
 const path = require('path');
 const mongoose = require('mongoose');
 
+const Product = require('./models/product')
+
 main().catch(err => console.log(err));
 
 async function main() {
-    await mongoose.connect('mongodb://localhost:27017/movieApp')
+    await mongoose.connect('mongodb://localhost:27017/farmStand')
         .then(() => {
             console.log("Mongo connection open")
         })
