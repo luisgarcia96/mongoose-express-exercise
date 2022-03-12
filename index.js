@@ -47,9 +47,10 @@ app.get('/products', async (req, res) => {
     res.render('products/index.ejs', {products})
 })
 
+const categories = ['fruit', 'vegetable', 'dairy'];
+
 app.get('/products/new', (req, res) => {
-    console.log(req.body);
-    res.render('products/new.ejs')
+    res.render('products/new.ejs', {categories})
 })
 
 app.post('/products', async (req, res) => {
@@ -67,7 +68,7 @@ app.get('/products/:id', async (req, res) => {
 app.get('/products/:id/edit', async (req, res) => {
     const {id} = req.params;
     const product = await Product.findById(id);
-    res.render('products/edit.ejs', {product})
+    res.render('products/edit.ejs', {product, categories})
 })
 
 app.put('/products/:id', async (req, res) => {
