@@ -16,5 +16,9 @@
     <a href="/products/<%= product._id %>/edit">Edit this product</a>
     <a href="/products">Back to products</a> 
 
+    <form action="/products/<%= product._id %>/?_method=delete" method="POST">
+        <button>Delete product</button>
+    </form>
+
 </body>
 </html>
