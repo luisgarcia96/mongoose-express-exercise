@@ -4,7 +4,8 @@ const app = express();
 const path = require('path');
 const mongoose = require('mongoose');
 
-const Product = require('./models/product')
+const Product = require('./models/product');
+const { urlencoded } = require('express');
 
 main().catch(err => console.log(err));
 
@@ -19,24 +20,47 @@ async function main() {
         })
 }
 
-//Configuration d'express pour définir le chemin d'accès vers les views ou templates 
+//Configuration d'Express pour définir le chemin d'accès vers les views ou templates 
 app.set('views', path.join(__dirname, 'views'));
 
-//Configuration d'express pour définir EJS comme moteur de templates
+//Configuration d'Express pour définir EJS comme moteur de templates
 app.set('view engine', 'ejs');
+
+/**Cette configuration me permet de traduire l'information envoyé dans la POST request (qui est en format url-encoded) à un objet js 
+ * compréhensible pour le serveur et qui est disponible dans le req.body
+ * 
+ * https://stackoverflow.com/questions/23259168/what-are-express-json-and-express-urlencoded
+ * https://stackoverflow.com/questions/55558402/what-is-the-meaning-of-bodyparser-urlencoded-extended-true-and-bodypar
+ */
+app.use(express.urlencoded({extended: true}));
+
+
 
 app.listen(3000, () => {
     console.log("App is listening on port 3000");
 })
+
+
+
 
 app.get('/products', async (req, res) => {
     const products = await Product.find({})
     res.render('products/index.ejs', {products})
 })
 
+app.get('/products/new', (req, res) => {
+    console.log(req.body);
+    res.render('products/new.ejs')
+})
+
+app.post('/products', async (req, res) => {
+    const newProduct = new Product(req.body);
+    await newProduct.save();
+    res.redirect(`/products/${newProduct._id}`);
+})
+
 app.get('/products/:id', async (req, res) => {
     const {id} = req.params;
-    console.log(req.params);
     const product = await Product.findById(id);
     res.render('products/show.ejs', {product})
 })
