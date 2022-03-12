@@ -1,11 +1,10 @@
 const express = require('express');
-const res = require('express/lib/response');
 const app = express();
 const path = require('path');
 const mongoose = require('mongoose');
+const methodOverride = require('method-override')
 
 const Product = require('./models/product');
-const { urlencoded } = require('express');
 
 main().catch(err => console.log(err));
 
@@ -34,7 +33,7 @@ app.set('view engine', 'ejs');
  */
 app.use(express.urlencoded({extended: true}));
 
-
+app.use(methodOverride('_method'))
 
 app.listen(3000, () => {
     console.log("App is listening on port 3000");
@@ -63,4 +62,16 @@ app.get('/products/:id', async (req, res) => {
     const {id} = req.params;
     const product = await Product.findById(id);
     res.render('products/show.ejs', {product})
+})
+
+app.get('/products/:id/edit', async (req, res) => {
+    const {id} = req.params;
+    const product = await Product.findById(id);
+    res.render('products/edit.ejs', {product})
+})
+
+app.put('/products/:id', async (req, res) => {
+    const {id} = req.params;
+    const product = await Product.findByIdAndUpdate(id, req.body, {runValidators : true, new : true});
+    res.redirect(`/products/${product._id}`); 
 })
